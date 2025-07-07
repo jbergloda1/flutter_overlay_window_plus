@@ -9,20 +9,28 @@ class WindowSize {
 enum OverlayAlignment {
   /// Center of screen
   center,
+
   /// Top of screen
   top,
+
   /// Bottom of screen
   bottom,
+
   /// Left of screen
   left,
+
   /// Right of screen
   right,
+
   /// Top left corner
   topLeft,
+
   /// Top right corner
   topRight,
+
   /// Bottom left corner
   bottomLeft,
+
   /// Bottom right corner
   bottomRight,
 }
@@ -31,8 +39,10 @@ enum OverlayAlignment {
 enum NotificationVisibility {
   /// Show notification on lock screen
   visibilityPublic,
+
   /// Hide notification on lock screen
   visibilitySecret,
+
   /// Show notification on lock screen but hide sensitive content
   visibilityPrivate,
 }
@@ -50,10 +60,13 @@ enum OverlayFlag {
 enum PositionGravity {
   /// Allow overlay to be positioned anywhere on screen
   none,
+
   /// Stick overlay to right side of screen
   right,
+
   /// Stick overlay to left side of screen
   left,
+
   /// Auto-stick to left or right side depending on position
   auto,
-} 
+}

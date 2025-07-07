@@ -16,7 +16,8 @@ void main() {
 
   testWidgets('permission test', (WidgetTester tester) async {
     // Test permission checking
-    final bool hasPermission = await FlutterOverlayWindowPlus.isPermissionGranted();
+    final bool hasPermission =
+        await FlutterOverlayWindowPlus.isPermissionGranted();
     expect(hasPermission, isA<bool>());
   });
 

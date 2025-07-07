@@ -11,8 +11,10 @@ export 'src/overlay_enums.dart';
 export 'src/overlay_position.dart';
 
 class FlutterOverlayWindowPlus {
-  static const MethodChannel _channel = MethodChannel('flutter_overlay_window_plus');
-  static const EventChannel _eventChannel = EventChannel('flutter_overlay_window_plus_events');
+  static const MethodChannel _channel =
+      MethodChannel('flutter_overlay_window_plus');
+  static const EventChannel _eventChannel =
+      EventChannel('flutter_overlay_window_plus_events');
 
   static Stream<dynamic>? _overlayListener;
 
@@ -40,7 +42,7 @@ class FlutterOverlayWindowPlus {
   }
 
   /// Show overlay window
-  /// 
+  ///
   /// [height] - overlay height (default: WindowSize.fullCover)
   /// [width] - overlay width (default: WindowSize.matchParent)
   /// [alignment] - overlay position on screen (default: OverlayAlignment.center)
@@ -99,7 +101,8 @@ class FlutterOverlayWindowPlus {
   /// Share data between overlay and main app
   static Future<bool> shareData(String data) async {
     try {
-      final bool result = await _channel.invokeMethod('shareData', {'data': data});
+      final bool result =
+          await _channel.invokeMethod('shareData', {'data': data});
       return result;
     } on PlatformException catch (e) {
       debugPrint('Error sharing data: ${e.message}');
@@ -110,7 +113,8 @@ class FlutterOverlayWindowPlus {
   /// Update overlay flag while overlay is active
   static Future<bool> updateFlag(OverlayFlag flag) async {
     try {
-      final bool result = await _channel.invokeMethod('updateFlag', {'flag': flag.index});
+      final bool result =
+          await _channel.invokeMethod('updateFlag', {'flag': flag.index});
       return result;
     } on PlatformException catch (e) {
       debugPrint('Error updating flag: ${e.message}');
@@ -148,7 +152,8 @@ class FlutterOverlayWindowPlus {
   /// Get current overlay position
   static Future<OverlayPosition?> getOverlayPosition() async {
     try {
-      final Map<dynamic, dynamic>? result = await _channel.invokeMethod('getOverlayPosition');
+      final Map<dynamic, dynamic>? result =
+          await _channel.invokeMethod('getOverlayPosition');
       if (result != null) {
         return OverlayPosition.fromMap(Map<String, dynamic>.from(result));
       }

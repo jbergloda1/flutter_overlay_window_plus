@@ -2,7 +2,7 @@
 class OverlayPosition {
   /// X coordinate
   final int x;
-  
+
   /// Y coordinate
   final int y;
 
@@ -37,4 +37,4 @@ class OverlayPosition {
 
   @override
   int get hashCode => x.hashCode ^ y.hashCode;
-} 
+}

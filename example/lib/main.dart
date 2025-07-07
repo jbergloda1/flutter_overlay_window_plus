@@ -71,7 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(hasPermission ? 'Permission granted' : 'Permission denied'),
+          content:
+              Text(hasPermission ? 'Permission granted' : 'Permission denied'),
           backgroundColor: hasPermission ? Colors.green : Colors.red,
         ),
       );
@@ -83,7 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(granted ? 'Permission granted' : 'Please grant permission manually'),
+          content: Text(granted
+              ? 'Permission granted'
+              : 'Please grant permission manually'),
           backgroundColor: granted ? Colors.green : Colors.orange,
         ),
       );
@@ -127,7 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Small overlay shown' : 'Failed to show overlay'),
+          content:
+              Text(success ? 'Small overlay shown' : 'Failed to show overlay'),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
       );
@@ -182,7 +186,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _shareData() async {
-    final success = await FlutterOverlayWindowPlus.shareData('Hello from main app!');
+    final success =
+        await FlutterOverlayWindowPlus.shareData('Hello from main app!');
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -198,9 +203,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(position != null 
-            ? 'Position: (${position.x}, ${position.y})' 
-            : 'No overlay active'),
+          content: Text(position != null
+              ? 'Position: (${position.x}, ${position.y})'
+              : 'No overlay active'),
           backgroundColor: Colors.blue,
         ),
       );
@@ -324,7 +329,8 @@ class _MyHomePageState extends State<MyHomePage> {
               if (_timer != null && _timer!.isActive)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text('Streaming count: $_counter', textAlign: TextAlign.center),
+                  child: Text('Streaming count: $_counter',
+                      textAlign: TextAlign.center),
                 ),
 
               const SizedBox(height: 16),

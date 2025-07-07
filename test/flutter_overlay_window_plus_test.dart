@@ -8,7 +8,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) async {
         switch (methodCall.method) {
@@ -38,7 +39,8 @@ void main() {
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   group('FlutterOverlayWindowPlus', () {
@@ -82,7 +84,8 @@ void main() {
     });
 
     test('updateFlag returns true', () async {
-      final result = await FlutterOverlayWindowPlus.updateFlag(OverlayFlag.defaultFlag);
+      final result =
+          await FlutterOverlayWindowPlus.updateFlag(OverlayFlag.defaultFlag);
       expect(result, true);
     });
 
@@ -92,7 +95,8 @@ void main() {
     });
 
     test('moveOverlay returns true', () async {
-      final result = await FlutterOverlayWindowPlus.moveOverlay(const OverlayPosition(50, 75));
+      final result = await FlutterOverlayWindowPlus.moveOverlay(
+          const OverlayPosition(50, 75));
       expect(result, true);
     });
 
@@ -128,7 +132,7 @@ void main() {
       const position1 = OverlayPosition(100, 200);
       const position2 = OverlayPosition(100, 200);
       const position3 = OverlayPosition(200, 100);
-      
+
       expect(position1, equals(position2));
       expect(position1, isNot(equals(position3)));
     });
@@ -157,17 +161,19 @@ void main() {
     });
 
     test('all values are defined', () {
-      expect(OverlayAlignment.values, containsAll([
-        OverlayAlignment.center,
-        OverlayAlignment.top,
-        OverlayAlignment.bottom,
-        OverlayAlignment.left,
-        OverlayAlignment.right,
-        OverlayAlignment.topLeft,
-        OverlayAlignment.topRight,
-        OverlayAlignment.bottomLeft,
-        OverlayAlignment.bottomRight,
-      ]));
+      expect(
+          OverlayAlignment.values,
+          containsAll([
+            OverlayAlignment.center,
+            OverlayAlignment.top,
+            OverlayAlignment.bottom,
+            OverlayAlignment.left,
+            OverlayAlignment.right,
+            OverlayAlignment.topLeft,
+            OverlayAlignment.topRight,
+            OverlayAlignment.bottomLeft,
+            OverlayAlignment.bottomRight,
+          ]));
     });
   });
 
@@ -181,10 +187,12 @@ void main() {
     });
 
     test('all values are defined', () {
-      expect(OverlayFlag.values, containsAll([
-        OverlayFlag.defaultFlag,
-        OverlayFlag.focusPointer,
-      ]));
+      expect(
+          OverlayFlag.values,
+          containsAll([
+            OverlayFlag.defaultFlag,
+            OverlayFlag.focusPointer,
+          ]));
     });
   });
 
@@ -198,12 +206,14 @@ void main() {
     });
 
     test('all values are defined', () {
-      expect(PositionGravity.values, containsAll([
-        PositionGravity.none,
-        PositionGravity.right,
-        PositionGravity.left,
-        PositionGravity.auto,
-      ]));
+      expect(
+          PositionGravity.values,
+          containsAll([
+            PositionGravity.none,
+            PositionGravity.right,
+            PositionGravity.left,
+            PositionGravity.auto,
+          ]));
     });
   });
 
@@ -213,11 +223,13 @@ void main() {
     });
 
     test('all values are defined', () {
-      expect(NotificationVisibility.values, containsAll([
-        NotificationVisibility.visibilityPublic,
-        NotificationVisibility.visibilitySecret,
-        NotificationVisibility.visibilityPrivate,
-      ]));
+      expect(
+          NotificationVisibility.values,
+          containsAll([
+            NotificationVisibility.visibilityPublic,
+            NotificationVisibility.visibilitySecret,
+            NotificationVisibility.visibilityPrivate,
+          ]));
     });
   });
-} 
+}
