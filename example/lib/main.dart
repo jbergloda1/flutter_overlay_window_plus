@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window_plus/flutter_overlay_window_plus.dart';
 import 'dart:developer' as developer;
+import 'dart:async';
+
+import 'package:flutter_overlay_window_plus/src/overlay_enums.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,11 +37,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _isOverlayActive = false;
   String _lastEvent = 'No events yet';
+  Timer? _timer;
+  int _counter = 0;
 
   @override
   void initState() {
     super.initState();
     _listenToOverlayEvents();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   void _listenToOverlayEvents() {
@@ -82,8 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _showOverlay() async {
     final success = await FlutterOverlayWindowPlus.showOverlay(
       height: 200,
-      width: 300,
-      alignment: OverlayAlignment.center,
+      width: WindowSize.matchParent,
+      alignment: OverlayAlignment.top,
       flag: OverlayFlag.defaultFlag,
       overlayTitle: "Demo Overlay",
       overlayContent: "This is a demo overlay window",
@@ -95,27 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(success ? 'Overlay shown' : 'Failed to show overlay'),
-          backgroundColor: success ? Colors.green : Colors.red,
-        ),
-      );
-    }
-  }
-
-  Future<void> _showClickThroughOverlay() async {
-    final success = await FlutterOverlayWindowPlus.showOverlay(
-      height: WindowSize.fullCover,
-      width: WindowSize.matchParent,
-      alignment: OverlayAlignment.center,
-      flag: OverlayFlag.clickThrough,
-      overlayTitle: "Click-Through Overlay",
-      overlayContent: "This overlay allows clicks to pass through",
-      enableDrag: false,
-    );
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success ? 'Click-through overlay shown' : 'Failed to show overlay'),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
       );
@@ -144,8 +134,43 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _startStreaming() async {
+    if (_isOverlayActive) {
+      // Start the timer to send data every second
+      _timer?.cancel(); // Cancel any existing timer
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() {
+          _counter++;
+        });
+        FlutterOverlayWindowPlus.shareData('Live text: $_counter');
+      });
+    } else {
+      // Show overlay first, then start streaming
+      final success = await FlutterOverlayWindowPlus.showOverlay(
+        height: 200,
+        width: WindowSize.matchParent,
+        alignment: OverlayAlignment.top,
+        overlayTitle: "Live Text Stream",
+        overlayContent: "Waiting for stream to start...",
+      );
+      if (success) {
+        _startStreaming(); // Call again to start the timer
+      }
+    }
+  }
+
+  void _stopStreaming() {
+    _timer?.cancel();
+    setState(() {
+      _counter = 0;
+    });
+  }
+
   Future<void> _closeOverlay() async {
     final success = await FlutterOverlayWindowPlus.closeOverlay();
+    if (success) {
+      _stopStreaming(); // Stop streaming when overlay is closed
+    }
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -191,109 +216,144 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Status card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Status',
-                      style: Theme.of(context).textTheme.headlineSmall,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Status card
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Status',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Text('Overlay Active: $_isOverlayActive'),
+                      Text('Last Event: $_lastEvent'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Permission section
+              Text(
+                'Permissions',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _checkPermission,
+                      child: const Text('Check Permission'),
                     ),
-                    const SizedBox(height: 8),
-                    Text('Overlay Active: $_isOverlayActive'),
-                    Text('Last Event: $_lastEvent'),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _requestPermission,
+                      child: const Text('Request Permission'),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Permission section
-            Text(
-              'Permissions',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _checkPermission,
-                    child: const Text('Check Permission'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _requestPermission,
-                    child: const Text('Request Permission'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Overlay controls
-            Text(
-              'Overlay Controls',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _isOverlayActive ? null : _showOverlay,
-              child: const Text('Show Default Overlay'),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _isOverlayActive ? null : _showClickThroughOverlay,
-              child: const Text('Show Click-Through Overlay'),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _isOverlayActive ? null : _showSmallOverlay,
-              child: const Text('Show Small Overlay'),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _isOverlayActive ? _closeOverlay : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
+              // Overlay controls
+              Text(
+                'Overlay Controls',
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-              child: const Text('Close Overlay'),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: _isOverlayActive ? null : _showOverlay,
+                child: const Text('Show Default Overlay'),
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: _isOverlayActive ? null : _showSmallOverlay,
+                child: const Text('Show Small Overlay'),
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: _isOverlayActive ? _closeOverlay : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Close Overlay'),
+              ),
+              const SizedBox(height: 16),
 
-            // Communication
-            Text(
-              'Communication',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isOverlayActive ? _shareData : null,
-                    child: const Text('Share Data'),
+              // Streaming Section
+              Text(
+                'Text Streaming',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _timer == null || !_timer!.isActive
+                          ? _startStreaming
+                          : null,
+                      child: const Text('Start Stream'),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isOverlayActive ? _getPosition : null,
-                    child: const Text('Get Position'),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _timer != null && _timer!.isActive
+                          ? _stopStreaming
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                      ),
+                      child: const Text('Stop Stream'),
+                    ),
                   ),
+                ],
+              ),
+              if (_timer != null && _timer!.isActive)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text('Streaming count: $_counter', textAlign: TextAlign.center),
                 ),
-              ],
-            ),
-          ],
+
+              const SizedBox(height: 16),
+
+              // Communication
+              Text(
+                'Communication',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isOverlayActive ? _shareData : null,
+                      child: const Text('Share Data'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isOverlayActive ? _getPosition : null,
+                      child: const Text('Get Position'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

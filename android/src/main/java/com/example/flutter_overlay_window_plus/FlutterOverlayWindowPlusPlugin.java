@@ -1,7 +1,10 @@
 package com.example.flutter_overlay_window_plus;
 
+import android.app.Activity;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -15,7 +18,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 /** FlutterOverlayWindowPlusPlugin */
-public class FlutterOverlayWindowPlusPlugin implements FlutterPlugin, MethodCallHandler {
+public class FlutterOverlayWindowPlusPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -23,6 +26,7 @@ public class FlutterOverlayWindowPlusPlugin implements FlutterPlugin, MethodCall
   private MethodChannel channel;
   private EventChannel eventChannel;
   private Context context;
+  private Activity activity;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -75,6 +79,9 @@ public class FlutterOverlayWindowPlusPlugin implements FlutterPlugin, MethodCall
       case "getOverlayPosition":
         getOverlayPosition(result);
         break;
+      case "minimizeApp":
+        minimizeApp(result);
+        break;
       default:
         result.notImplemented();
         break;
@@ -112,19 +119,20 @@ public class FlutterOverlayWindowPlusPlugin implements FlutterPlugin, MethodCall
 
     try {
       Intent intent = new Intent(context, OverlayService.class);
-      intent.putExtra("height", call.argument("height"));
-      intent.putExtra("width", call.argument("width"));
-      intent.putExtra("alignment", call.argument("alignment"));
-      intent.putExtra("visibility", call.argument("visibility"));
-      intent.putExtra("flag", call.argument("flag"));
-      intent.putExtra("overlayTitle", call.argument("overlayTitle"));
-      intent.putExtra("overlayContent", call.argument("overlayContent"));
-      intent.putExtra("enableDrag", call.argument("enableDrag"));
-      intent.putExtra("positionGravity", call.argument("positionGravity"));
+      intent.putExtra("height", call.argument("height") != null ? ((Number) call.argument("height")).intValue() : 0);
+      intent.putExtra("width", call.argument("width") != null ? ((Number) call.argument("width")).intValue() : 0);
+      intent.putExtra("alignment", call.argument("alignment") != null ? ((Number) call.argument("alignment")).intValue() : 0);
+      intent.putExtra("visibility", call.argument("visibility") != null ? ((Number) call.argument("visibility")).intValue() : 0);
+      intent.putExtra("flag", call.argument("flag") != null ? ((Number) call.argument("flag")).intValue() : 0);
+      intent.putExtra("overlayTitle", (String) call.argument("overlayTitle"));
+      intent.putExtra("overlayContent", (String) call.argument("overlayContent"));
+      intent.putExtra("enableDrag", call.argument("enableDrag") != null ? (Boolean) call.argument("enableDrag") : false);
+      intent.putExtra("positionGravity", call.argument("positionGravity") != null ? ((Number) call.argument("positionGravity")).intValue() : 0);
       
       if (call.argument("startPosition") != null) {
-        intent.putExtra("startX", ((java.util.Map) call.argument("startPosition")).get("x"));
-        intent.putExtra("startY", ((java.util.Map) call.argument("startPosition")).get("y"));
+        java.util.Map startPosition = (java.util.Map) call.argument("startPosition");
+        intent.putExtra("startX", startPosition.get("x") != null ? ((Number) startPosition.get("x")).intValue() : 0);
+        intent.putExtra("startY", startPosition.get("y") != null ? ((Number) startPosition.get("y")).intValue() : 0);
       }
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -216,9 +224,38 @@ public class FlutterOverlayWindowPlusPlugin implements FlutterPlugin, MethodCall
     }
   }
 
+  private void minimizeApp(Result result) {
+    if (activity != null) {
+      activity.moveTaskToBack(true);
+      result.success(true);
+    } else {
+      result.error("NO_ACTIVITY", "The plugin is not attached to an activity.", null);
+    }
+  }
+
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channel.setMethodCallHandler(null);
     eventChannel.setStreamHandler(null);
+  }
+
+  @Override
+  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+    this.activity = binding.getActivity();
+  }
+
+  @Override
+  public void onDetachedFromActivityForConfigChanges() {
+    this.activity = null;
+  }
+
+  @Override
+  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+    this.activity = binding.getActivity();
+  }
+
+  @Override
+  public void onDetachedFromActivity() {
+    this.activity = null;
   }
 } 

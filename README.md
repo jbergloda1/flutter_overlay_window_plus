@@ -1,16 +1,16 @@
 # Flutter Overlay Window Plus
 
-A Flutter plugin for displaying overlay windows over other apps with enhanced features and better API.
+A Flutter plugin for displaying a single, robust overlay window over other apps with enhanced features and better API.
 
 ## Features
 
-- ✅ Display overlay windows over other apps
-- ✅ Multiple overlay types (default, click-through, focus pointer)
+- ✅ Display a **single instance** of an overlay window over other apps (prevents multiple overlays)
 - ✅ Draggable overlays with position gravity
 - ✅ Customizable size and position
-- ✅ Real-time communication between overlay and main app
+- ✅ **Live data streaming** to the overlay from your main app
+- ✅ **Minimize app to background** and **re-launch on overlay close**
 - ✅ Permission management
-- ✅ Event streaming
+- ✅ Event streaming for overlay state changes
 - ✅ Better error handling and API design
 
 ## Installation
@@ -91,15 +91,6 @@ final bool success = await FlutterOverlayWindowPlus.showOverlay(
 ### Advanced Usage
 
 ```dart
-// Show click-through overlay
-await FlutterOverlayWindowPlus.showOverlay(
-  height: WindowSize.fullCover,
-  width: WindowSize.matchParent,
-  flag: OverlayFlag.clickThrough,
-  overlayTitle: "Click-Through Overlay",
-  enableDrag: false,
-);
-
 // Show small draggable overlay
 await FlutterOverlayWindowPlus.showOverlay(
   height: 100,
@@ -114,8 +105,12 @@ await FlutterOverlayWindowPlus.showOverlay(
 // Close overlay
 await FlutterOverlayWindowPlus.closeOverlay();
 
-// Share data with overlay
-await FlutterOverlayWindowPlus.shareData("Hello from main app!");
+// Share data with overlay (can be used for live streaming)
+// In the overlay service, the text will be updated dynamically
+await FlutterOverlayWindowPlus.shareData("Live update text: ${DateTime.now()}");
+
+// Minimize the app to the background
+await FlutterOverlayWindowPlus.minimizeApp();
 
 // Get overlay position
 final position = await FlutterOverlayWindowPlus.getOverlayPosition();
@@ -174,7 +169,6 @@ enum OverlayAlignment {
 
 ```dart
 enum OverlayFlag {
-  clickThrough,  // Window can never receive touch events
   defaultFlag,   // Default window flag (won't get key input focus)
   focusPointer,  // Allow pointer events outside window
 }
@@ -222,15 +216,18 @@ enum NotificationVisibility {
 - `updateFlag(flag)` - Update overlay flag while active
 - `overlayListener` - Stream for listening to overlay events
 
+### App Control
+- `minimizeApp()` - Minimize the host application to the background.
+
 ## Example
 
-See the `example/` directory for a complete working example.
+See the `example/` directory for a complete working example demonstrating all features, including live text streaming.
 
 ## Limitations
 
 - Only supports Android (iOS has strict limitations on overlay windows)
 - Requires `SYSTEM_ALERT_WINDOW` permission
-- Overlay content is currently limited to basic text (custom widgets require additional implementation)
+- Overlay content is currently rendered as a native Android view (TextView). Custom Flutter widgets in the overlay are not directly supported by this architecture, but the displayed text can be updated live from Flutter.
 
 ## Contributing
 

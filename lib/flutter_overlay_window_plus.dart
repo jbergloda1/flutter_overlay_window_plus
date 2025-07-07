@@ -159,6 +159,17 @@ class FlutterOverlayWindowPlus {
     }
   }
 
+  /// Minimize the application to background
+  static Future<bool> minimizeApp() async {
+    try {
+      final bool result = await _channel.invokeMethod('minimizeApp');
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint('Error minimizing app: ${e.message}');
+      return false;
+    }
+  }
+
   /// Stream for listening to overlay events
   static Stream<dynamic> get overlayListener {
     _overlayListener ??= _eventChannel.receiveBroadcastStream();

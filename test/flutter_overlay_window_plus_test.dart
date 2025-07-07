@@ -82,7 +82,7 @@ void main() {
     });
 
     test('updateFlag returns true', () async {
-      final result = await FlutterOverlayWindowPlus.updateFlag(OverlayFlag.clickThrough);
+      final result = await FlutterOverlayWindowPlus.updateFlag(OverlayFlag.defaultFlag);
       expect(result, true);
     });
 
@@ -176,13 +176,12 @@ void main() {
       expect(OverlayFlag.values.length, 3);
     });
 
-    test('clickThrough is first value', () {
-      expect(OverlayFlag.clickThrough.index, 0);
+    test('defaultFlag is first value', () {
+      expect(OverlayFlag.defaultFlag.index, 0);
     });
 
     test('all values are defined', () {
       expect(OverlayFlag.values, containsAll([
-        OverlayFlag.clickThrough,
         OverlayFlag.defaultFlag,
         OverlayFlag.focusPointer,
       ]));

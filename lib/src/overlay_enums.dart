@@ -39,10 +39,9 @@ enum NotificationVisibility {
 
 /// Overlay window flags
 enum OverlayFlag {
-  /// Window can never receive touch events (click-through)
-  clickThrough,
   /// Default window flag (won't get key input focus)
   defaultFlag,
+
   /// Allow pointer events outside window to be sent to windows behind it
   focusPointer,
 }
