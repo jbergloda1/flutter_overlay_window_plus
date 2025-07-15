@@ -59,7 +59,7 @@ class FlutterOverlayWindowPlus {
     OverlayAlignment alignment = OverlayAlignment.center,
     NotificationVisibility visibility = NotificationVisibility.visibilitySecret,
     OverlayFlag flag = OverlayFlag.defaultFlag,
-    String overlayTitle = "Overlay Active",
+    String overlayTitle = "",
     String? overlayContent,
     bool enableDrag = false,
     PositionGravity positionGravity = PositionGravity.none,

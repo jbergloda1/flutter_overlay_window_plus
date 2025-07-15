@@ -272,26 +272,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
               // Overlay controls
               Text(
-                'Overlay Controls',
+                'Show/Close Overlay',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _isOverlayActive ? null : _showOverlay,
+                onPressed: _showOverlay,
                 child: const Text('Show Default Overlay'),
               ),
-              const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _isOverlayActive ? null : _showSmallOverlay,
-                child: const Text('Show Small Overlay'),
+                onPressed: _showSmallOverlay,
+                child: const Text('Show Small Overlay (Top-Right)'),
               ),
-              const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _isOverlayActive ? _closeOverlay : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
+                onPressed: _closeOverlay,
                 child: const Text('Close Overlay'),
               ),
               const SizedBox(height: 16),
